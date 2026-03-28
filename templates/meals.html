@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-3">Meals</h2>
+
+<div class="row">
+    {% for meal in meals %}
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ meal.name }}</h5>
+                <p class="card-text text-muted">{{ meal.category }}</p>
+
+                <a href="/meals/delete/{{ meal.id }}" class="btn btn-sm btn-danger">
+                    Delete
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<a href="/meals/add" class="btn btn-primary mt-3">➕ Add Meal</a>
+{% endblock %}

@@ -1,0 +1,62 @@
+body {
+    background-color: #fff0f5; /* light pink */
+}
+
+/* Card / container feel */
+.cute-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Table styling */
+.cute-table th {
+    background-color: #ffb6c1;
+    color: white;
+}
+
+.cute-table td {
+    background-color: #fff;
+}
+
+/* Meal type colors */
+.breakfast {
+    background-color: #ffe4e1;
+}
+
+.lunch {
+    background-color: #e0ffff;
+}
+
+.dinner {
+    background-color: #f3e5f5;
+}
+
+/* Dropdown styling */
+select {
+    border-radius: 10px !important;
+    border: 1px solid #ddd !important;
+}
+
+/* Buttons */
+.btn-cute {
+    background-color: #ff69b4;
+    color: white;
+    border-radius: 20px;
+    padding: 8px 20px;
+    border: none;
+}
+
+.btn-cute:hover {
+    background-color: #ff85c1;
+}
+
+/* Navigation buttons */
+.nav-btn {
+    background-color: #ffd1dc;
+    border-radius: 50%;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: black;
+}
