@@ -5,8 +5,15 @@ from datetime import date, timedelta
 app = Flask(__name__)
 import os
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.getcwd(), 'meals.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+database_url = os.environ.get('postgresql://meal_planner_db_xqb4_user:4Qr6aEh4nfW0zOqpklUdgOTsG27LbT79@dpg-d74kn18gjchc73b9h6dg-a/meal_planner_db_xqb4')
+
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///meals.db'
+
 
 db.init_app(app)
 
