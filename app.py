@@ -5,7 +5,7 @@ from datetime import date, timedelta
 app = Flask(__name__)
 import os
 
-database_url = os.environ.get('postgresql://meal_planner_db_xqb4_user:4Qr6aEh4nfW0zOqpklUdgOTsG27LbT79@dpg-d74kn18gjchc73b9h6dg-a/meal_planner_db_xqb4')
+database_url = os.environ.get('DATABASE_URL')
 
 if database_url:
     if database_url.startswith("postgres://"):
