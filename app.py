@@ -102,6 +102,17 @@ def planner():
 
     plan_dict = {(pm.day_of_week, pm.meal_type): pm.meal_id for pm in plan_meals}
 
+    # Build all dates in selected week for dynamic planner labels
+    week_days = []
+    for day in range(7):
+        current_date = monday + timedelta(days=day)
+        week_days.append({
+            "index": day,
+            "short_name": current_date.strftime("%a"),
+            "display_date": current_date.strftime("%d %b"),
+            "iso_date": current_date.isoformat()
+        })
+
     # Calculate prev/next weeks
     prev_week = monday - timedelta(days=7)
     next_week = monday + timedelta(days=7)
@@ -111,6 +122,9 @@ def planner():
         meals=meals,
         plan=plan_dict,
         monday=monday,
+        week_end=monday + timedelta(days=6),
+        week_days=week_days,
+        today_iso=date.today().isoformat(),
         prev_week=prev_week,
         next_week=next_week,
         timedelta=timedelta

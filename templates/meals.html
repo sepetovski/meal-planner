@@ -1,24 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-3">Meals</h2>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+        <h2 class="mb-1">Meals</h2>
+        <p class="text-muted mb-0">Your saved meals library.</p>
+    </div>
+    <a href="/meals/add" class="btn btn-primary app-btn-primary">+ Add Meal</a>
+</div>
 
-<div class="row">
+<div class="row g-3">
     {% for meal in meals %}
-    <div class="col-md-4 mb-3">
-        <div class="card shadow-sm">
+    <div class="col-md-6 col-lg-4">
+        <div class="card meal-card h-100">
             <div class="card-body">
-                <h5 class="card-title">{{ meal.name }}</h5>
-                <p class="card-text text-muted">{{ meal.category }}</p>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0">{{ meal.name }}</h5>
+                    <span class="meal-chip">{{ meal.category|capitalize }}</span>
+                </div>
 
-                <a href="/meals/delete/{{ meal.id }}" class="btn btn-sm btn-danger">
+                <a href="/meals/delete/{{ meal.id }}" class="btn btn-sm btn-outline-danger">
                     Delete
                 </a>
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="col-12">
+        <div class="empty-state text-center">
+            <p class="mb-2">No meals added yet.</p>
+            <a href="/meals/add" class="btn btn-primary app-btn-primary">Create your first meal</a>
+        </div>
+    </div>
     {% endfor %}
 </div>
-
-<a href="/meals/add" class="btn btn-primary mt-3">➕ Add Meal</a>
 {% endblock %}

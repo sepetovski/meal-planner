@@ -1,75 +1,111 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% set meal_types = ['breakfast', 'lunch', 'dinner'] %}
 
-<div class="cute-card">
+<div class="cute-card planner-panel">
+    <div class="planner-header mb-4">
+        <div>
+            <h2 class="mb-1">Weekly Meal Plan</h2>
+            <p class="text-muted mb-0">Tap any slot to build your week quickly.</p>
+        </div>
+        <div class="planner-progress">
+            <span id="selected-count">0</span>/21 slots filled
+        </div>
+    </div>
 
-    <h2 class="text-center mb-4">🌸 Weekly Meal Plan 🌸</h2>
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 week-switcher">
         <a class="nav-btn" href="/planner?week={{ prev_week }}">⬅️</a>
-
-        <h5 class="m-0">
-            {{ monday }} - {{ week_end }}
-        </h5>
-
+        <h5 class="m-0 fw-semibold">{{ monday.strftime('%d %b %Y') }} - {{ week_end.strftime('%d %b %Y') }}</h5>
         <a class="nav-btn" href="/planner?week={{ next_week }}">➡️</a>
     </div>
 
-    <form method="POST">
-    <div class="table-responsive">
-    <table class="table cute-table text-center align-middle">
+    <form method="POST" id="planner-form">
+        <div class="planner-grid">
+            {% for day_info in week_days %}
+            <section class="day-card {% if day_info.iso_date == today_iso %}today-card{% endif %}" data-day-index="{{ day_info.index }}">
+                <div class="day-card-head">
+                    <div>
+                        <h6 class="mb-0">{{ day_info.short_name }}</h6>
+                        <small class="day-date">{{ day_info.display_date }}</small>
+                        {% if day_info.iso_date == today_iso %}
+                        <span class="today-pill">Today</span>
+                        {% endif %}
+                    </div>
+                    <button type="button" class="btn btn-sm day-clear-btn">Clear</button>
+                </div>
 
-        <thead>
-            <tr>
-                <th></th>
-                <th>🌼 Mon</th>
-                <th>🌼 Tue</th>
-                <th>🌼 Wed</th>
-                <th>🌼 Thu</th>
-                <th>🌼 Fri</th>
-                <th>🌼 Sat</th>
-                <th>🌼 Sun</th>
-            </tr>
-        </thead>
+                <div class="meal-slot breakfast-slot">
+                    <label for="d{{ day_info.index }}_breakfast">Breakfast</label>
+                    <select id="d{{ day_info.index }}_breakfast" class="form-select planner-select" name="{{ day_info.index }}_breakfast">
+                        <option value="">Choose meal...</option>
+                        {% for meal in meals %}
+                        <option value="{{ meal.id }}" {% if plan.get((day_info.index, 'breakfast')) == meal.id %}selected{% endif %}>{{ meal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <tbody>
-        {% for meal_type in ['breakfast', 'lunch', 'dinner'] %}
-        <tr class="{{ meal_type }}">
-            <th class="text-capitalize">
-                {% if meal_type == 'breakfast' %} 🥞 Breakfast
-                {% elif meal_type == 'lunch' %} 🥗 Lunch
-                {% else %} 🍝 Dinner
-                {% endif %}
-            </th>
+                <div class="meal-slot lunch-slot">
+                    <label for="d{{ day_info.index }}_lunch">Lunch</label>
+                    <select id="d{{ day_info.index }}_lunch" class="form-select planner-select" name="{{ day_info.index }}_lunch">
+                        <option value="">Choose meal...</option>
+                        {% for meal in meals %}
+                        <option value="{{ meal.id }}" {% if plan.get((day_info.index, 'lunch')) == meal.id %}selected{% endif %}>{{ meal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-            {% for day in range(7) %}
-            <td>
-                <select name="{{ day }}_{{ meal_type }}">
-                    <option value="">--</option>
-                    {% for meal in meals %}
-                        <option value="{{ meal.id }}"
-                        {% if plan.get((day, meal_type)) == meal.id %}selected{% endif %}
-                        >
-                            {{ meal.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </td>
+                <div class="meal-slot dinner-slot">
+                    <label for="d{{ day_info.index }}_dinner">Dinner</label>
+                    <select id="d{{ day_info.index }}_dinner" class="form-select planner-select" name="{{ day_info.index }}_dinner">
+                        <option value="">Choose meal...</option>
+                        {% for meal in meals %}
+                        <option value="{{ meal.id }}" {% if plan.get((day_info.index, 'dinner')) == meal.id %}selected{% endif %}>{{ meal.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </section>
             {% endfor %}
-        </tr>
-        {% endfor %}
-        </tbody>
+        </div>
 
-    </table>
-    </div>
-
-    <div class="text-center mt-3">
-        <button class="btn-cute">💾 Save Week</button>
-    </div>
-
+        <div class="planner-actions mt-4">
+            <button class="btn-cute" type="submit">💾 Save Week</button>
+        </div>
     </form>
-
 </div>
+
+<script>
+    (function () {
+        const form = document.getElementById("planner-form");
+        if (!form) return;
+
+        const selects = Array.from(form.querySelectorAll("select"));
+        const countEl = document.getElementById("selected-count");
+
+        function updateState() {
+            let filled = 0;
+            selects.forEach((select) => {
+                if (select.value) filled += 1;
+                const slot = select.closest(".meal-slot");
+                if (slot) slot.classList.toggle("filled", Boolean(select.value));
+            });
+            if (countEl) countEl.textContent = String(filled);
+        }
+
+        form.querySelectorAll(".day-clear-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const card = btn.closest(".day-card");
+                if (!card) return;
+                card.querySelectorAll("select").forEach((select) => {
+                    select.value = "";
+                });
+                updateState();
+            });
+        });
+
+        selects.forEach((select) => select.addEventListener("change", updateState));
+        updateState();
+    })();
+</script>
 
 {% endblock %}
