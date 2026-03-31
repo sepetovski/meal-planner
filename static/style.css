@@ -290,9 +290,218 @@ select,
     background-color: #f4e6ff;
 }
 
+.drop-slot {
+    cursor: pointer;
+}
+
+.drop-slot.drag-over {
+    border-color: #ff3ea5;
+    box-shadow: 0 0 0 3px rgba(255, 62, 165, 0.18), 0 12px 24px rgba(255, 62, 165, 0.12);
+    background-color: rgba(255, 62, 165, 0.06);
+}
+
+.slot-display {
+    margin-top: 0.32rem;
+    padding: 0.42rem 0.55rem;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px dashed #ff9dd6;
+    font-weight: 800;
+    color: #7b0a4b;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+}
+
+.meal-slot.filled .slot-display {
+    border-style: solid;
+    border-color: #ff3ea5;
+    background: linear-gradient(135deg, rgba(255, 62, 165, 0.10) 0%, rgba(198, 61, 255, 0.12) 100%);
+}
+
+.planner-layout {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.planner-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.meal-library {
+    width: 340px;
+    flex: 0 0 340px;
+    border-radius: 16px;
+    border: 1px solid #ffc3e7;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 10px 24px rgba(255, 62, 165, 0.08);
+    padding: 1rem;
+    position: sticky;
+    top: 1rem;
+}
+
+.meal-library-head h3 {
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    color: #a10e6b;
+}
+
+.meal-library-controls {
+    margin-top: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.library-category-tabs {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+}
+
+.lib-tab {
+    border-radius: 999px;
+    border: 1px solid #ff9dd6;
+    background-color: #ffffff;
+    color: #a10e6b;
+    font-size: 0.78rem;
+    font-weight: 900;
+    padding: 0.25rem 0.6rem;
+    line-height: 1.1;
+    transition: 0.16s ease;
+}
+
+.lib-tab:hover {
+    background-color: #ffe8f7;
+}
+
+.lib-tab.active {
+    border-color: #ff3ea5;
+    background: linear-gradient(135deg, #ff3ea5 0%, #c63dff 100%);
+    color: #fff;
+}
+
+.library-search {
+    border-radius: 12px !important;
+    border: 1px solid #f3a9d8 !important;
+    min-height: 42px;
+}
+
+.meal-library-list {
+    max-height: 66vh;
+    overflow: auto;
+    padding-right: 0.25rem;
+}
+
+.meal-draggable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    border: 1px solid #ffd7ef;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 0.55rem 0.7rem;
+    box-shadow: 0 8px 18px rgba(255, 62, 165, 0.06);
+    margin-bottom: 0.6rem;
+    user-select: none;
+    cursor: grab;
+    transition: 0.16s ease;
+}
+
+.meal-draggable:active {
+    cursor: grabbing;
+}
+
+.meal-draggable:hover {
+    transform: translateY(-1px);
+    border-color: #ff9dd6;
+}
+
+.meal-draggable-title {
+    font-weight: 900;
+    color: #3b234a;
+}
+
+.meal-draggable-cat {
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: #a10e6b;
+    background-color: #ffe0f3;
+    border-radius: 999px;
+    padding: 0.18rem 0.5rem;
+    white-space: nowrap;
+}
+
 .planner-actions {
     display: flex;
     justify-content: center;
+}
+
+.planner-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.quick-action-btn {
+    border-radius: 999px;
+    border: 1px solid #ff9dd6;
+    background-color: #ffffff;
+    color: #a10e6b;
+    font-weight: 800;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.quick-action-btn:hover {
+    background-color: #ffe8f7;
+    color: #7b0a4b;
+}
+
+.planner-filters {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1 1 240px;
+}
+
+.planner-search {
+    min-height: 42px;
+}
+
+.planner-filter-select {
+    min-width: 190px;
+}
+
+.day-actions {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.day-copy-btn {
+    border-radius: 999px;
+    border: 1px solid #ff9dd6;
+    color: #a10e6b;
+    background-color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    line-height: 1.1;
+    padding: 0.28rem 0.55rem;
+}
+
+.day-copy-btn:hover {
+    background-color: #ffe8f7;
 }
 
 @media (max-width: 768px) {
@@ -350,6 +559,36 @@ select,
 
     .planner-progress {
         font-size: 0.82rem;
+    }
+
+    .planner-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .planner-filter-select {
+        min-width: 100%;
+    }
+
+    .day-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .day-copy-btn,
+    .day-clear-btn {
+        width: 100%;
+    }
+
+    .planner-layout {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .meal-library {
+        width: 100%;
+        flex: 0 0 auto;
+        position: static;
     }
 }
 

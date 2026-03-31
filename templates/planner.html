@@ -3,108 +3,250 @@
 {% block content %}
 {% set meal_types = ['breakfast', 'lunch', 'dinner'] %}
 
-<div class="cute-card planner-panel">
-    <div class="planner-header mb-4">
-        <div>
-            <h2 class="mb-1">Weekly Meal Plan</h2>
-            <p class="text-muted mb-0">Tap any slot to build your week quickly.</p>
+<div class="cute-card planner-panel planner-layout">
+    <div class="planner-main">
+        <div class="planner-header mb-4">
+            <div>
+                <h2 class="mb-1">Weekly Meal Plan</h2>
+                <p class="text-muted mb-0">Drag meals onto a day slot to fill your week.</p>
+            </div>
+            <div class="planner-progress">
+                <span id="selected-count">0</span>/21 slots filled
+            </div>
         </div>
-        <div class="planner-progress">
-            <span id="selected-count">0</span>/21 slots filled
+
+        <div class="d-flex justify-content-between align-items-center mb-4 week-switcher">
+            <a class="nav-btn" href="/planner?week={{ prev_week }}">⬅️</a>
+            <h5 class="m-0 fw-semibold">{{ monday.strftime('%d %b %Y') }} - {{ week_end.strftime('%d %b %Y') }}</h5>
+            <a class="nav-btn" href="/planner?week={{ next_week }}">➡️</a>
         </div>
-    </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4 week-switcher">
-        <a class="nav-btn" href="/planner?week={{ prev_week }}">⬅️</a>
-        <h5 class="m-0 fw-semibold">{{ monday.strftime('%d %b %Y') }} - {{ week_end.strftime('%d %b %Y') }}</h5>
-        <a class="nav-btn" href="/planner?week={{ next_week }}">➡️</a>
-    </div>
-
-    <form method="POST" id="planner-form">
-        <div class="planner-grid">
-            {% for day_info in week_days %}
-            <section class="day-card {% if day_info.iso_date == today_iso %}today-card{% endif %}" data-day-index="{{ day_info.index }}">
-                <div class="day-card-head">
-                    <div>
-                        <h6 class="mb-0">{{ day_info.short_name }}</h6>
-                        <small class="day-date">{{ day_info.display_date }}</small>
-                        {% if day_info.iso_date == today_iso %}
-                        <span class="today-pill">Today</span>
-                        {% endif %}
+        <form method="POST" id="planner-form">
+            <div class="planner-grid">
+                {% for day_info in week_days %}
+                <section class="day-card {% if day_info.iso_date == today_iso %}today-card{% endif %}" data-day-index="{{ day_info.index }}">
+                    <div class="day-card-head">
+                        <div>
+                            <h6 class="mb-0">{{ day_info.short_name }}</h6>
+                            <small class="day-date">{{ day_info.display_date }}</small>
+                            {% if day_info.iso_date == today_iso %}
+                            <span class="today-pill">Today</span>
+                            {% endif %}
+                        </div>
+                        <button type="button" class="btn btn-sm day-clear-btn">Clear</button>
                     </div>
-                    <button type="button" class="btn btn-sm day-clear-btn">Clear</button>
-                </div>
 
-                <div class="meal-slot breakfast-slot">
-                    <label for="d{{ day_info.index }}_breakfast">Breakfast</label>
-                    <select id="d{{ day_info.index }}_breakfast" class="form-select planner-select" name="{{ day_info.index }}_breakfast">
-                        <option value="">Choose meal...</option>
-                        {% for meal in meals %}
-                        <option value="{{ meal.id }}" {% if plan.get((day_info.index, 'breakfast')) == meal.id %}selected{% endif %}>{{ meal.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                    <div class="meal-slot breakfast-slot drop-slot"
+                         data-meal-type="breakfast"
+                         data-day-index="{{ day_info.index }}">
+                        <label>Breakfast</label>
+                        <input type="hidden" name="{{ day_info.index }}_breakfast" value="{{ plan.get((day_info.index, 'breakfast')) or '' }}">
+                        <div class="slot-display" aria-live="polite">—</div>
+                    </div>
 
-                <div class="meal-slot lunch-slot">
-                    <label for="d{{ day_info.index }}_lunch">Lunch</label>
-                    <select id="d{{ day_info.index }}_lunch" class="form-select planner-select" name="{{ day_info.index }}_lunch">
-                        <option value="">Choose meal...</option>
-                        {% for meal in meals %}
-                        <option value="{{ meal.id }}" {% if plan.get((day_info.index, 'lunch')) == meal.id %}selected{% endif %}>{{ meal.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                    <div class="meal-slot lunch-slot drop-slot"
+                         data-meal-type="lunch"
+                         data-day-index="{{ day_info.index }}">
+                        <label>Lunch</label>
+                        <input type="hidden" name="{{ day_info.index }}_lunch" value="{{ plan.get((day_info.index, 'lunch')) or '' }}">
+                        <div class="slot-display" aria-live="polite">—</div>
+                    </div>
 
-                <div class="meal-slot dinner-slot">
-                    <label for="d{{ day_info.index }}_dinner">Dinner</label>
-                    <select id="d{{ day_info.index }}_dinner" class="form-select planner-select" name="{{ day_info.index }}_dinner">
-                        <option value="">Choose meal...</option>
-                        {% for meal in meals %}
-                        <option value="{{ meal.id }}" {% if plan.get((day_info.index, 'dinner')) == meal.id %}selected{% endif %}>{{ meal.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </section>
+                    <div class="meal-slot dinner-slot drop-slot"
+                         data-meal-type="dinner"
+                         data-day-index="{{ day_info.index }}">
+                        <label>Dinner</label>
+                        <input type="hidden" name="{{ day_info.index }}_dinner" value="{{ plan.get((day_info.index, 'dinner')) or '' }}">
+                        <div class="slot-display" aria-live="polite">—</div>
+                    </div>
+                </section>
+                {% endfor %}
+            </div>
+
+            <div class="planner-actions mt-4">
+                <button class="btn-cute" type="submit">💾 Save Week</button>
+            </div>
+        </form>
+    </div>
+
+    <aside class="meal-library" aria-label="Meal library">
+        <div class="meal-library-head">
+            <h3 class="mb-1">Meals</h3>
+            <p class="text-muted mb-0">Drag and drop into the planner.</p>
+        </div>
+
+        <div class="meal-library-controls">
+            <div class="library-category-tabs" role="tablist" aria-label="Filter by category">
+                <button type="button" class="lib-tab active" data-category="all">All</button>
+                <button type="button" class="lib-tab" data-category="breakfast">Breakfast</button>
+                <button type="button" class="lib-tab" data-category="lunch">Lunch</button>
+                <button type="button" class="lib-tab" data-category="dinner">Dinner</button>
+            </div>
+            <input
+                type="text"
+                id="library-search"
+                class="form-control library-search"
+                placeholder="Search by name..."
+            >
+        </div>
+
+        <div class="meal-library-list" id="meal-library-list">
+            {% for meal in meals %}
+            <div class="meal-draggable"
+                 draggable="true"
+                 data-meal-id="{{ meal.id }}"
+                 data-category="{{ meal.category }}">
+                <span class="meal-draggable-title">{{ meal.name }}</span>
+                <span class="meal-draggable-cat">{{ meal.category|capitalize }}</span>
+            </div>
             {% endfor %}
         </div>
-
-        <div class="planner-actions mt-4">
-            <button class="btn-cute" type="submit">💾 Save Week</button>
-        </div>
-    </form>
+    </aside>
 </div>
 
 <script>
     (function () {
         const form = document.getElementById("planner-form");
-        if (!form) return;
-
-        const selects = Array.from(form.querySelectorAll("select"));
         const countEl = document.getElementById("selected-count");
+        if (!form || !countEl) return;
+
+        const dropSlots = Array.from(form.querySelectorAll(".drop-slot"));
+        const dayClearBtns = Array.from(form.querySelectorAll(".day-clear-btn"));
+
+        // Build a lookup map for slot display text.
+        const mealMap = {};
+        const draggableEls = Array.from(document.querySelectorAll(".meal-draggable"));
+        draggableEls.forEach((el) => {
+            const id = el.dataset.mealId;
+            mealMap[id] = {
+                name: (el.querySelector(".meal-draggable-title") || el).textContent.trim(),
+                category: (el.dataset.category || "").toLowerCase()
+            };
+        });
+
+        function setSlotValue(slotEl, mealId) {
+            const input = slotEl.querySelector('input[type="hidden"]');
+            const displayEl = slotEl.querySelector(".slot-display");
+            if (!input || !displayEl) return;
+
+            input.value = mealId || "";
+
+            if (!mealId || !mealMap[mealId]) {
+                displayEl.textContent = "—";
+                slotEl.classList.remove("filled");
+                return;
+            }
+
+            displayEl.textContent = mealMap[mealId].name;
+            slotEl.classList.add("filled");
+        }
 
         function updateState() {
             let filled = 0;
-            selects.forEach((select) => {
-                if (select.value) filled += 1;
-                const slot = select.closest(".meal-slot");
-                if (slot) slot.classList.toggle("filled", Boolean(select.value));
+            dropSlots.forEach((slot) => {
+                const input = slot.querySelector('input[type="hidden"]');
+                const mealId = input ? input.value : "";
+                const isFilled = Boolean(mealId);
+                slot.classList.toggle("filled", isFilled);
+                if (isFilled) filled += 1;
+
+                // Keep displayed text consistent (useful after filters or re-render).
+                const displayEl = slot.querySelector(".slot-display");
+                if (displayEl) {
+                    displayEl.textContent = isFilled && mealMap[mealId] ? mealMap[mealId].name : "—";
+                }
             });
-            if (countEl) countEl.textContent = String(filled);
+
+            countEl.textContent = String(filled);
         }
 
-        form.querySelectorAll(".day-clear-btn").forEach((btn) => {
+        // Initialize slot displays from the existing saved plan.
+        dropSlots.forEach((slot) => {
+            const input = slot.querySelector('input[type="hidden"]');
+            if (input && input.value) setSlotValue(slot, input.value);
+        });
+        updateState();
+
+        // Clear one day (reset all three slots).
+        dayClearBtns.forEach((btn) => {
             btn.addEventListener("click", () => {
                 const card = btn.closest(".day-card");
                 if (!card) return;
-                card.querySelectorAll("select").forEach((select) => {
-                    select.value = "";
-                });
+                const slots = Array.from(card.querySelectorAll(".drop-slot"));
+                slots.forEach((slot) => setSlotValue(slot, ""));
                 updateState();
             });
         });
 
-        selects.forEach((select) => select.addEventListener("change", updateState));
-        updateState();
+        // Drag and drop.
+        let draggedMealId = "";
+        draggableEls.forEach((el) => {
+            el.addEventListener("dragstart", (e) => {
+                draggedMealId = el.dataset.mealId || "";
+                e.dataTransfer.setData("text/plain", draggedMealId);
+                e.dataTransfer.effectAllowed = "move";
+            });
+            el.addEventListener("dragend", () => {
+                draggedMealId = "";
+            });
+        });
+
+        dropSlots.forEach((slot) => {
+            slot.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                slot.classList.add("drag-over");
+                e.dataTransfer.dropEffect = "move";
+            });
+
+            slot.addEventListener("dragleave", () => {
+                slot.classList.remove("drag-over");
+            });
+
+            slot.addEventListener("drop", (e) => {
+                e.preventDefault();
+                slot.classList.remove("drag-over");
+
+                const mealId = e.dataTransfer.getData("text/plain") || draggedMealId;
+                if (!mealId || !mealMap[mealId]) return;
+
+                const targetMealType = (slot.dataset.mealType || "").toLowerCase();
+                const draggedCategory = (mealMap[mealId].category || "").toLowerCase();
+                if (targetMealType && draggedCategory && targetMealType !== draggedCategory) return;
+
+                setSlotValue(slot, mealId);
+                updateState();
+            });
+        });
+
+        // Side panel filtering (category + search).
+        const tabs = Array.from(document.querySelectorAll(".lib-tab"));
+        const searchInput = document.getElementById("library-search");
+        let activeCategory = "all";
+
+        function applyLibraryFilters() {
+            const term = (searchInput && searchInput.value ? searchInput.value : "").trim().toLowerCase();
+            draggableEls.forEach((el) => {
+                const cat = (el.dataset.category || "").toLowerCase();
+                const text = el.textContent.toLowerCase();
+
+                const matchesCategory = activeCategory === "all" || cat === activeCategory;
+                const matchesTerm = !term || text.includes(term);
+
+                el.style.display = (matchesCategory && matchesTerm) ? "" : "none";
+            });
+        }
+
+        tabs.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                activeCategory = btn.dataset.category || "all";
+                tabs.forEach((b) => b.classList.toggle("active", b === btn));
+                applyLibraryFilters();
+            });
+        });
+
+        if (searchInput) {
+            searchInput.addEventListener("input", applyLibraryFilters);
+        }
     })();
 </script>
 
